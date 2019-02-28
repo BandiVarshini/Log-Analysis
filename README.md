@@ -8,12 +8,14 @@
   On which days did more than 1% of requests lead to errors?`
  
  ## Software Requirements
- > `python3` - It is a general-purpose interpreted, interactive, object-oriented, and high-level programming language.
- > `Git-Bash` - Git is a distributed version-control system for tracking changes in source code.
- > `Virtual-Box` - Oracle VM VirtualBox is a free and open-source hosted hypervisor.
- > `Vagrant` - It is an open-source softwarw product for building and maintaining portable virtual software development environmeants.
- > `PostgreSQL` - It is an object-relational database system that uses and extendds the SQL language combined with many features that safely.
- > `Any Editor` - Like (Sublime text, Notepad, Notepad++, Visual Studio)
+  `python3` - It is a general-purpose interpreted, interactive, object-oriented, and high-level programming language.
+ `Git-Bash` - Git is a distributed version-control system for tracking changes in source code.
+  `Virtual-Box` - Oracle VM VirtualBox is a free and open-source hosted hypervisor.
+  `Vagrant` - It is an open-source softwarw product for building and maintaining portable virtual software development environmeants.
+  `PostgreSQL` - It is an object-relational database system that uses and extendds the SQL language combined with many features that safely.
+  `Any Editor` - Like (Sublime text, Notepad, Notepad++, Visual Studio)
+
+## There are few links
 
 ## Donwload Links
  
@@ -27,17 +29,16 @@
  | Sublime text | [https://www.sublimetext.com/3] |
 
  ## procedure for project execution
->Follw these steps-:
-> You must install above links.
-> 1.Click on clone or download.
-> 2.Extract the file.
-> 3.Past the download file near the database folder.
-> 4.Download database from here. --> [download-database](https://d17h27t6h515a5.cloudfront.net/topher/2016/August/57b5f748_newsdata/newsdata.zip)
-
+* Follow these steps-:
+ You must install above links.
+ 1.Click on clone or download.
+ 2.Extract the file.
+ 3.Past the download file near the database folder.
+ 4.Download database from [here](https://d17h27t6h515a5.cloudfront.net/topher/2016/August/57b5f748_newsdata/newsdata.zip)
 ## How to run Log-Analysis-Project
 
- * First place the all files in `vagrant` folrder
- * Click on right button.
+ * open `vagrant` folrder
+
  * Open `gitbash` here.
 
 ##commands for execution (sequential order)
@@ -63,5 +64,5 @@ psql -d news -f newsdata.sql   (compulsory command )
 python filename.py
 ```
 
-#### Note-: Queries takes some time to run.
+#### Note-: Queries will take some time to execute.
 
