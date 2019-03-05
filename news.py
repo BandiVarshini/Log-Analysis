@@ -4,40 +4,6 @@ import psycopg2
 DBNAME = "news"
 
 
-def article():
-    db = psycopg2.connect(database=DBNAME)
-    v = db.cursor()
-    v.execute(query_1)
-    results = v.fetchall()
-    for i in range(len(results)):
-        title = results[i][0]
-        views = results[i][1]
-        print("%s--%d" % (title, views))
-    db.close()
-
-
-def authors():
-    db = psycopg2.connect(database=DBNAME)
-    v = db.cursor()
-    v.execute(query_2)
-    results = v.fetchall()
-    for i in range(len(results)):
-        name = results[i][0]
-        views = results[i][1]
-        print("%s--%d" % (name, views))
-    db.close()
-
-
-def errperc():
-    db = psycopg2.connect(database=DBNAME)
-    v = db.cursor()
-    v.execute(query_3)
-    results = v.fetchall()
-    for i in range(len(results)):
-        date = results[i][0]
-        err_prc = results[i][1]
-        print("%s -- %.1f %%" % (date, err_prc))
-
 query_1 = """
 SELECT articles.title,
        count(*)
@@ -51,28 +17,73 @@ LIMIT 3;
 
 query_2 = """
 SELECT authors.name,
-       count(*)
-FROM log,
-     articles,
-     authors
-WHERE log.path = '/article/' || articles.slug
+       count(*) AS num
+FROM authors
+JOIN articles
+ON authors.id = articles.author
+JOIN log
+ON log.path like concat('/article/%', articles.slug)
 GROUP BY authors.name
-ORDER BY count(*) DESC;
+ORDER BY num DESC;
 """
 
-query_3 = """SELECT day, perc FROM (
-           SELECT day, round((sum(requests)/(SELECT count(*) FROM log WHERE 
-           substring(cast(log.time as text), 0, 11) = day) * 100), 2) as 
-           perc FROM (select substring(cast(log.time as text), 0, 11) as 
-           day, count(*) as requests FROM log 
-           WHERE status like '%404%' GROUP by day) 
-           as log_percentage GROUP by day ORDER by perc desc) as final_query 
-           WHERE perc >= 1"""
+query_3 = """
+select * from (
+    select a.day,
+    round(cast((100*b.hits) as numeric) / cast(a.hits as numeric), 2)
+    as errp from
+    (select date(time) as day, count(*) as hits from log group by day) as a
+    inner join
+    (select date(time) as day, count(*) as hits from log where status
+    like '%404%' group by day) as b
+    on a.day = b.day)
+    as t where errp > 1.0;
+"""
+
+
+def connect(database_name="news"):
+    try:
+        db = psycopg2.connect(dbname=DBNAME)
+        cursor = db.cursor()
+        return db, cursor()
+    except:
+        print("<error message>")
+
+
+def get_query_results(query):
+    db = psycopg2.connect(dbname=DBNAME)
+    cursor = db.cursor()
+    cursor.execute(query)
+    results = cursor.fetchall()
+    db.close()
+    return results
+
+
+def article(queries):
+    db = psycopg2.connect(dbname=DBNAME)
+    cursor = db.cursor()
+    cursor.execute(query_1)
+    results = cursor.fetchall()
+    for res in results:
+        print('{title} - {count} views'.format(title=res[0], count=res[1]))
+
+
+def author():
+    results = get_query_results(query_2)
+    for row in results:
+        print row[0], "-", row[1], "views"
+
+
+def error():
+    results = get_query_results(query_3)
+    for row in results:
+        print row[0], "-", row[1], "%"
+
 
 if __name__ == '__main__':
     print("\nPopular 3 articles\n")
-    article()
+    article(query_1)
     print("\npopular 4 authors\n")
-    authors()
+    author()
     print("\n Days in which more than 1 %")
-    errperc()
+    error()
